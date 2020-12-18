@@ -9,5 +9,13 @@ float saturate(float value) {
         return 1;
     return value;
 }
+
+float clamp(float value, float minValue, float maxValue) {
+    if(value < minValue)
+        return minValue;
+    if(value > maxValue)
+        return maxValue;
+    return value;
+}
     
 }
