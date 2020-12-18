@@ -5,6 +5,8 @@ project (coverage CXX)
 add_library(mtmath INTERFACE)
 add_library(mtmath::mtmath ALIAS mtmath)
 
+target_include_directories(mtmath INTERFACE "${CMAKE_SOURCE_DIR}/mtmath")
+
 enable_testing()
 
 include(CTest)
