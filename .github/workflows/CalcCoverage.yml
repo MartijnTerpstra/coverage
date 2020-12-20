@@ -10,14 +10,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Compile tests
-      working-directory: build
+    - name: Build CMake
       env:
         CXXFLAGS: "-O0 --coverage -fno-inline -fno-inline-small-functions -fno-default-inline"
         CXX: g++
-      run: |
-        cmake ..
-        make -j4
+      run: cmake -B build .
+        
+    - name: Compile Makefiles
+      working-directory: build
+      run: make -j4
+        
     - name: Run tests
       working-directory: build
       env:
