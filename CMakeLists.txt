@@ -60,4 +60,4 @@ function(SETUP_BASIC_TEST TEST_NAME TEST_SOURCES)
 
 endfunction()
 
-SETUP_BASIC_TEST(algorithm mtmath/algorithm.cpp)
+SETUP_BASIC_TEST(algorithm tests/algorithm.cpp)
