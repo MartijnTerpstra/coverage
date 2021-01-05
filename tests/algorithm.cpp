@@ -38,17 +38,17 @@ TEST_CASE("Saturate: MaxValueShouleBeOne", "[Algo]")
 	REQUIRE(mtmath::saturate(100) == 1.f);
 }
 
-TEST_CASE("Saturate: OnlyGoodValues", "[Algo]")
+TEST_CASE("Clamp: OnlyGoodValues", "[Algo]")
 {
 	REQUIRE(mtmath::clamp(0.5f, 0, 1) == 0.5f);
 }
 
-TEST_CASE("Saturate: NegativeValuesShouldBeZero", "[Algo]")
+TEST_CASE("Clamp: NegativeValuesShouldBeZero", "[Algo]")
 {
 	REQUIRE(mtmath::clamp(-0.5f, 0, 1) == 0.f);
 }
 
-TEST_CASE("Saturate: MaxValueShouleBeOne", "[Algo]")
+TEST_CASE("Clamp: MaxValueShouleBeOne", "[Algo]")
 {
 	REQUIRE(mtmath::clamp(100, 0, 1) == 1.f);
 }
