@@ -4,10 +4,10 @@ namespace mtmath {
 
 float saturate(float value)
 {
-	if (value < 0)
-		return 0;
-	if (value > 1)
-		return 1;
+	if (value < 0.0f)
+		return minValue;
+	if (value > 1.0f)
+		return maxValue;
 	return value;
 }
 
