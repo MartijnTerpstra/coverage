@@ -1,4 +1,4 @@
-#include <algorithm.hpp>
+#include <algorithm.h>
 
 #if 0
 #include <gtest/gtest.h>
