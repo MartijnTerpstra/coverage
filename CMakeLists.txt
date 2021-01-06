@@ -2,7 +2,18 @@ cmake_minimum_required (VERSION 3.13)
 
 project (mst CXX)
 
-add_library(mst STATIC src/algorithm.cpp)
+add_library(mst STATIC
+    src/muuid.cpp
+    src/mthreading.cpp
+    src/mthreading_rw_lock.cpp
+    src/mthreading_slim.cpp
+    src/muuid.cpp)
+
+if(UNIX)
+target_link_libraries(mst
+	PUBLIC pthread)
+endif()
+
 add_library(mst::mst ALIAS mst)
 
 target_include_directories(mst PUBLIC "${CMAKE_SOURCE_DIR}/mst")
@@ -60,4 +71,50 @@ function(SETUP_BASIC_TEST TEST_NAME TEST_SOURCES)
 
 endfunction()
 
-SETUP_BASIC_TEST(algorithm tests/algorithm.cpp)
+macro(add_mst_test CATEGORY TEST_NAME)
+
+SETUP_BASIC_TEST("test_${CATEGORY}_${TEST_NAME}" "tests/${CATEGORY}/${TEST_NAME}.cpp")
+
+endmacro(add_mst_test)
+
+add_mst_test(algorithm container)
+add_mst_test(algorithm for_each)
+add_mst_test(algorithm for_each_remove_if)
+
+add_mst_test(common common)
+add_mst_test(common compiletime)
+add_mst_test(common flag)
+add_mst_test(common hash)
+add_mst_test(common printf)
+add_mst_test(common uuid)
+
+add_mst_test(containers array_view)
+add_mst_test(containers arraymap)
+add_mst_test(containers colony)
+add_mst_test(containers ranges)
+add_mst_test(containers sparse_set)
+
+add_mst_test(lock_free queue)
+
+add_mst_test(math algorithm)
+add_mst_test(math vector_simd)
+add_mst_test(math matrix_simd)
+add_mst_test(math matrix_functionality)
+
+add_mst_test(memory aligned_allocator)
+add_mst_test(memory aligned_malloc)
+add_mst_test(memory memory_view)
+
+add_mst_test(platform directory_and_paths)
+add_mst_test(platform memory)
+add_mst_test(platform names_and_versions)
+add_mst_test(platform processor)
+
+add_mst_test(testing random_data_generator)
+add_mst_test(testing set_assertions)
+
+add_mst_test(threading slim_event)
+
+if(WIN32)
+add_mst_test(memory com_ptr)
+endif()
