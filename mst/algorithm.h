@@ -2,7 +2,7 @@
 
 namespace mtmath {
 
-float saturate(float value)
+inline float saturate(float value)
 {
 	if (value < 0.0f)
 		return 0.0f;
