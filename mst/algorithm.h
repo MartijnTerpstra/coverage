@@ -5,9 +5,9 @@ namespace mtmath {
 float saturate(float value)
 {
 	if (value < 0.0f)
-		return minValue;
+		return 0.0f;
 	if (value > 1.0f)
-		return maxValue;
+		return 1.0f;
 	return value;
 }
 
