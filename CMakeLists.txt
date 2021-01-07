@@ -9,6 +9,8 @@ add_library(mst STATIC
     src/mthreading_slim.cpp
     src/muuid.cpp)
 
+target_compile_features(mst 
+	PUBLIC cxx_std_11)
 
 if(UNIX)
 target_link_libraries(mst
