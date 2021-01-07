@@ -59,7 +59,7 @@ endfunction()
 
 macro(add_mst_test CATEGORY TEST_NAME)
 
-SETUP_BASIC_TEST("test_${CATEGORY}_${TEST_NAME}" "tests/${CATEGORY}/${TEST_NAME}.cpp")
+SETUP_BASIC_TEST("test_${CATEGORY}_${TEST_NAME}" "${CATEGORY}/${TEST_NAME}.cpp")
 
 endmacro(add_mst_test)
 
