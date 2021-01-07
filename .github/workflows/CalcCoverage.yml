@@ -24,7 +24,7 @@ jobs:
       working-directory: build
       env:
         CTEST_OUTPUT_ON_FAILURE: 1
-      run: ctest --timeout 5 -C Debug -j4
+      run: ctest --timeout 120 -C Debug -j4
     - name: Upload coverage to Codecov
       working-directory: build
       env:
