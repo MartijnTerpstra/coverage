@@ -1,11 +1,22 @@
 cmake_minimum_required (VERSION 3.13)
 
-project (coverage CXX)
+project (mst CXX)
 
-add_library(mtmath INTERFACE)
-add_library(mtmath::mtmath ALIAS mtmath)
+add_library(mst STATIC
+    src/mplatform.cpp
+    src/mthreading.cpp
+    src/mthreading_rw_lock.cpp
+    src/mthreading_slim.cpp
+    src/muuid.cpp)
 
-target_include_directories(mtmath INTERFACE "${CMAKE_SOURCE_DIR}/mtmath")
+if(UNIX)
+target_link_libraries(mst
+	PUBLIC pthread)
+endif()
+
+add_library(mst::mst ALIAS mst)
+
+target_include_directories(mst PUBLIC "${CMAKE_SOURCE_DIR}/mst")
 
 enable_testing()
 
@@ -15,23 +26,24 @@ include(CTest)
 Include(FetchContent)
 
 FetchContent_Declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG master
-        GIT_SHALLOW 1
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG v2.13.1
     )
 
-FetchContent_GetProperties(googletest)
+FetchContent_MakeAvailable(Catch2)
 
-if(NOT googletest_POPULATED)
-    FetchContent_Populate(googletest)
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-endif()
+list (APPEND CMAKE_MODULE_PATH "${Catch2_SOURCE_DIR}/contrib")
+
+include(Catch)
 
 function(SETUP_TARGET TARGET_NAME)
     set_target_properties(${TARGET_NAME} PROPERTIES CXX_EXTENSIONS OFF)
-    target_link_libraries(${TARGET_NAME} PRIVATE mtmath)
+    target_link_libraries(${TARGET_NAME} PRIVATE mst)
+
+    target_include_directories(${TARGET_NAME}
+	    PUBLIC "${PROJECT_SOURCE_DIR}/tests/testing"
+    )
 
     if(MSVC)
         target_compile_options(
@@ -56,9 +68,57 @@ endfunction()
 
 function(SETUP_BASIC_TEST TEST_NAME TEST_SOURCES)
     add_executable(${TEST_NAME} ${TEST_SOURCES})
-    target_link_libraries(${TEST_NAME} PRIVATE gtest_main)
+    target_link_libraries(${TEST_NAME} PRIVATE Catch2::Catch2)
     SETUP_TARGET(${TEST_NAME} ${ARGN})
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+    catch_discover_tests(${TEST_NAME})
+
 endfunction()
 
-SETUP_BASIC_TEST(algorithm tests/algorithm.cpp)
+macro(add_mst_test CATEGORY TEST_NAME)
+
+SETUP_BASIC_TEST("test_${CATEGORY}_${TEST_NAME}" "tests/${CATEGORY}/${TEST_NAME}.cpp")
+
+endmacro(add_mst_test)
+
+add_mst_test(algorithm container)
+add_mst_test(algorithm for_each)
+add_mst_test(algorithm for_each_remove_if)
+
+add_mst_test(common common)
+add_mst_test(common compiletime)
+add_mst_test(common flag)
+add_mst_test(common hash)
+add_mst_test(common printf)
+add_mst_test(common uuid)
+
+add_mst_test(containers array_view)
+add_mst_test(containers arraymap)
+add_mst_test(containers colony)
+add_mst_test(containers ranges)
+add_mst_test(containers sparse_set)
+
+add_mst_test(lock_free queue)
+
+add_mst_test(math algorithm)
+add_mst_test(math vector_simd)
+add_mst_test(math matrix_simd)
+add_mst_test(math matrix_functionality)
+
+add_mst_test(memory aligned_allocator)
+add_mst_test(memory aligned_malloc)
+add_mst_test(memory memory_view)
+
+add_mst_test(platform directory_and_paths)
+add_mst_test(platform memory)
+add_mst_test(platform names_and_versions)
+add_mst_test(platform processor)
+
+add_mst_test(testing random_data_generator)
+add_mst_test(testing set_assertions)
+
+add_mst_test(threading slim_event)
+
+if(WIN32)
+add_mst_test(memory com_ptr)
+endif()

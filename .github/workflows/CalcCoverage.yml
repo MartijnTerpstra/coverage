@@ -10,19 +10,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Compile tests
-      working-directory: build
+    - name: Build CMake
       env:
         CXXFLAGS: "-O0 --coverage -fno-inline -fno-inline-small-functions -fno-default-inline"
         CXX: g++
-      run: |
-        cmake ..
-        make -j4
+      run: cmake -B build .
+        
+    - name: Compile Makefiles
+      working-directory: build
+      run: make -j4
+        
     - name: Run tests
       working-directory: build
       env:
         CTEST_OUTPUT_ON_FAILURE: 1
-      run: ctest --timeout 5 -C Debug -j4
+      run: ctest --timeout 120 -C Debug -j4
     - name: Upload coverage to Codecov
       working-directory: build
       env:
