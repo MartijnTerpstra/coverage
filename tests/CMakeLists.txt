@@ -1,0 +1,106 @@
+cmake_minimum_required (VERSION 3.13)
+
+enable_testing()
+
+include(CTest)
+
+
+Include(FetchContent)
+
+FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG v2.13.1
+    )
+
+FetchContent_MakeAvailable(Catch2)
+
+list (APPEND CMAKE_MODULE_PATH "${Catch2_SOURCE_DIR}/contrib")
+
+include(Catch)
+
+function(SETUP_TARGET TARGET_NAME)
+    set_target_properties(${TARGET_NAME} PROPERTIES CXX_EXTENSIONS OFF)
+    target_link_libraries(${TARGET_NAME} PRIVATE mst)
+
+    target_include_directories(${TARGET_NAME}
+	    PUBLIC "${PROJECT_SOURCE_DIR}/tests/testing"
+    )
+
+    if(MSVC)
+        target_compile_options(
+            ${TARGET_NAME}
+            PRIVATE
+                /EHsc /W1 /wd4996 /w14800
+                $<$<CONFIG:Debug>:/Od>
+                $<$<CONFIG:Release>:/O2>
+        )
+    else()
+        target_compile_options(
+            ${TARGET_NAME}
+            PRIVATE
+                -pedantic -fvisibility=hidden -Wall -Wshadow -Wno-deprecated-declarations
+                $<$<CONFIG:Debug>:-O0 -ggdb3>
+                $<$<CONFIG:Release>:-O2>
+        )
+    endif()
+
+    target_compile_definitions(${TARGET_NAME} PRIVATE ${ARGN})
+endfunction()
+
+function(SETUP_BASIC_TEST TEST_NAME TEST_SOURCES)
+    add_executable(${TEST_NAME} ${TEST_SOURCES})
+    target_link_libraries(${TEST_NAME} PRIVATE Catch2::Catch2)
+    SETUP_TARGET(${TEST_NAME} ${ARGN})
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+    catch_discover_tests(${TEST_NAME})
+
+endfunction()
+
+macro(add_mst_test CATEGORY TEST_NAME)
+
+SETUP_BASIC_TEST("test_${CATEGORY}_${TEST_NAME}" "tests/${CATEGORY}/${TEST_NAME}.cpp")
+
+endmacro(add_mst_test)
+
+add_mst_test(algorithm container)
+add_mst_test(algorithm for_each)
+add_mst_test(algorithm for_each_remove_if)
+
+add_mst_test(common common)
+add_mst_test(common compiletime)
+add_mst_test(common flag)
+add_mst_test(common hash)
+add_mst_test(common printf)
+add_mst_test(common uuid)
+
+add_mst_test(containers array_view)
+add_mst_test(containers arraymap)
+add_mst_test(containers colony)
+add_mst_test(containers ranges)
+add_mst_test(containers sparse_set)
+
+add_mst_test(lock_free queue)
+
+add_mst_test(math algorithm)
+add_mst_test(math vector_simd)
+add_mst_test(math matrix_simd)
+add_mst_test(math matrix_functionality)
+
+add_mst_test(memory aligned_allocator)
+add_mst_test(memory aligned_malloc)
+add_mst_test(memory memory_view)
+
+add_mst_test(platform directory_and_paths)
+add_mst_test(platform memory)
+add_mst_test(platform names_and_versions)
+add_mst_test(platform processor)
+
+add_mst_test(testing random_data_generator)
+add_mst_test(testing set_assertions)
+
+add_mst_test(threading slim_event)
+
+if(WIN32)
+add_mst_test(memory com_ptr)
+endif()
