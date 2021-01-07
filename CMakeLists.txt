@@ -2,6 +2,8 @@ cmake_minimum_required (VERSION 3.13)
 
 project (mst CXX)
 
+option(MST_RUN_TESTS "Build tests for mst utility library" OFF)
+
 if(UNIX)
 set(platform_name "linux")
 
