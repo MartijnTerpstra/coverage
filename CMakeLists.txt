@@ -9,6 +9,7 @@ add_library(mst STATIC
     src/mthreading_slim.cpp
     src/muuid.cpp)
 
+
 if(UNIX)
 target_link_libraries(mst
 	PUBLIC pthread)
