@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.13)
 project (mst CXX)
 
 add_library(mst STATIC
-    src/muuid.cpp
+    src/mplatform.cpp
     src/mthreading.cpp
     src/mthreading_rw_lock.cpp
     src/mthreading_slim.cpp
