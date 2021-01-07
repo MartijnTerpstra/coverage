@@ -41,7 +41,7 @@ function(SETUP_TARGET TARGET_NAME)
     set_target_properties(${TARGET_NAME} PROPERTIES CXX_EXTENSIONS OFF)
     target_link_libraries(${TARGET_NAME} PRIVATE mst)
 
-    target_include_directories("test_${CATEGORY}_${TEST_NAME}"
+    target_include_directories(${TARGET_NAME}
 	    PUBLIC "${PROJECT_SOURCE_DIR}/tests/testing"
     )
 
